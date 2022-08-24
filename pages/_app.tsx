@@ -1,7 +1,27 @@
 import type { AppProps } from 'next/app'
+import { createGlobalStyle } from 'styled-components'
 
-function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
-}
+const GlobalStyle = createGlobalStyle`
+  * {
+    font-family: 'Ubuntu Condensed', sans-serif;
+    box-sizing: border-box;
+    transition: ease-in .1s;
+  }
 
-export default MyApp
+  html,
+  body {
+    padding: 0;
+    margin: 0;
+  }
+
+  @media screen and (max-width: 1200px) {}
+`
+
+const App = ({ Component, pageProps }: AppProps) => (
+  <>
+    <GlobalStyle />
+    <Component {...pageProps} />
+  </>
+)
+
+export default App
