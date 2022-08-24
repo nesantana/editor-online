@@ -1,3 +1,3 @@
-import { Home } from '@src/Home'
+import { Home } from '@src/Pages/Home'
 
 export default Home
