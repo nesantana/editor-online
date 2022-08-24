@@ -1,4 +1,5 @@
 import { api, urls } from '@src/Services/Api'
+import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { BsFillFileEarmarkMinusFill } from 'react-icons/bs'
 import { FiChevronDown, FiChevronRight } from 'react-icons/fi'
@@ -17,12 +18,13 @@ interface iCurrentComponent {
   id: number
   isDirectory: boolean
   text: string
-  onClick: () => void
 }
 
 export const Sidebar: React.FC<any> = () => {
   const [tree, setTree] = useState<iFileOrDirectory[]>([])
   const [open, setOpen] = useState<number[]>([])
+
+  const { push: pushRouter } = useRouter()
 
   const searchAll = async () => {
     try {
@@ -43,11 +45,10 @@ export const Sidebar: React.FC<any> = () => {
     id,
     isDirectory,
     text,
-    onClick,
   } : iCurrentComponent) => {
     if (isDirectory) {
       return (
-        <Directory onClick={onClick}>
+        <Directory onClick={() => handleSetOpen(id)}>
           {
             open.includes(id)
               ? <FiChevronDown />
@@ -59,7 +60,7 @@ export const Sidebar: React.FC<any> = () => {
     }
 
     return (
-      <File onClick={onClick}>
+      <File onClick={() => handleSetOpenFile(id)}>
         <BsFillFileEarmarkMinusFill />
         {' '}
         {text}
@@ -77,65 +78,39 @@ export const Sidebar: React.FC<any> = () => {
     setOpen((prevState) => [...prevState, id])
   }
 
+  const handleSetOpenFile = (id: number) => {
+    pushRouter(`/${id}`)
+  }
+
+  const RenderFiles = ({ item } : { item: iFileOrDirectory }) => {
+    console.log(item)
+
+    return (
+      <Son key={`${item.id}-${item.name}-inside`}>
+        <CurrentComponent
+          id={item.id}
+          isDirectory={item.isDirectory}
+          text={`${item.name}`}
+        />
+
+        {
+          (
+            open.includes(item.id)
+            && item.children
+            && item.children.length
+          )
+          && item.children.map((son) => (
+            <RenderFiles key={`${son.id}-renderFiles`} item={son} />
+          ))
+        }
+      </Son>
+    )
+  }
+
   return (
     <ContentSidebar>
       { tree.map((item) => (
-        <Son key={`${item.id}-directory`}>
-          <CurrentComponent
-            id={item.id}
-            isDirectory={item.isDirectory}
-            text={`${item.name}`}
-            onClick={() => handleSetOpen(item.id)}
-          />
-
-          {open.includes(item.id) && item.children.map((son) => (
-            <Son key={`${son.id}-son`}>
-              <CurrentComponent
-                id={son.id}
-                isDirectory={son.isDirectory}
-                text={`${son.name}`}
-                onClick={() => handleSetOpen(son.id)}
-              />
-
-              {open.includes(son.id) && son.children.map((grandson) => (
-                <Son key={`${grandson.id}-grandson`}>
-                  <CurrentComponent
-                    id={grandson.id}
-                    isDirectory={grandson.isDirectory}
-                    text={`${grandson.name}`}
-                    onClick={() => handleSetOpen(grandson.id)}
-                  />
-
-                  {open.includes(grandson.id) && grandson.children.map((grandgrandson) => (
-                    <Son key={`${grandgrandson.id}-grandgrandson`}>
-                      <CurrentComponent
-                        id={grandgrandson.id}
-                        isDirectory={grandgrandson.isDirectory}
-                        text={`${grandgrandson.name}`}
-                        onClick={() => handleSetOpen(grandgrandson.id)}
-                      />
-
-                      {
-                        open.includes(grandgrandson.id)
-                        && !!grandgrandson.children
-                        && grandgrandson.children.map((grandgrandgrandson) => (
-                          <Son key={`${grandgrandgrandson.id}-grandgrandgrandson`}>
-                            <CurrentComponent
-                              id={grandgrandgrandson.id}
-                              isDirectory={grandgrandgrandson.isDirectory}
-                              text={`${grandgrandgrandson.name}`}
-                              onClick={() => handleSetOpen(grandgrandgrandson.id)}
-                            />
-                          </Son>
-                        ))
-                      }
-                    </Son>
-                  ))}
-                </Son>
-              ))}
-            </Son>
-          ))}
-        </Son>
+        <RenderFiles key={`${item.id}-renderFiles`} item={item} />
       )) }
       <div />
     </ContentSidebar>

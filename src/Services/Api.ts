@@ -40,7 +40,7 @@ const api = new Api()
 
 const urls = {
   getAll: 'filetree/',
-  general: 'file/',
+  general: 'files/',
 }
 
 export {

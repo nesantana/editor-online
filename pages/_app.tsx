@@ -1,5 +1,6 @@
 import type { AppProps } from 'next/app'
 import { createGlobalStyle } from 'styled-components'
+import 'quill/dist/quill.snow.css'
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -12,6 +13,12 @@ const GlobalStyle = createGlobalStyle`
   body {
     padding: 0;
     margin: 0;
+  }
+
+  .ql-toolbar.ql-snow {
+    height: 0;
+    padding: 0;
+    border-bottom: none;
   }
 
   @media screen and (max-width: 1200px) {}

@@ -50,5 +50,6 @@ module.exports = {
     'no-console': 'off',
     'react/no-danger': 'off',
     'jsx-a11y/iframe-has-title': 'off',
+    'import/no-extraneous-dependencies': 'off',
   },
 }
