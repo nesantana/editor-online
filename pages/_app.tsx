@@ -1,7 +1,7 @@
 import type { AppProps } from 'next/app'
 import { createGlobalStyle } from 'styled-components'
 import 'quill/dist/quill.snow.css'
-import { FileProvider } from '@src/Contexts/Files.Context'
+import { FileProvider } from '@src/Contexts/Files.context'
 
 const GlobalStyle = createGlobalStyle`
   * {

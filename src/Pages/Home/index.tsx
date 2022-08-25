@@ -1,6 +1,6 @@
 import { Content } from '@src/Components/Content'
 import { Sidebar } from '@src/Components/Sidebar'
-import { useFileContext } from '@src/Contexts/Files.Context'
+import { useFileContext } from '@src/Contexts/Files.context'
 import React, { useMemo } from 'react'
 
 export const Home: React.FC<any> = () => {

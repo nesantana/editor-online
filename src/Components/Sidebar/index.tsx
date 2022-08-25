@@ -1,4 +1,4 @@
-import { iFileOrDirectory, useFileContext } from '@src/Contexts/Files.Context'
+import { iFileOrDirectory, useFileContext } from '@src/Contexts/Files.context'
 import React, { useEffect, useState } from 'react'
 import { BsFillFileEarmarkMinusFill } from 'react-icons/bs'
 import { FiChevronDown, FiChevronRight } from 'react-icons/fi'

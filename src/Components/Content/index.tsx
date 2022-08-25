@@ -1,4 +1,4 @@
-import { iFile, useFileContext } from '@src/Contexts/Files.Context'
+import { iFile, useFileContext } from '@src/Contexts/Files.context'
 import { api, urls } from '@src/Services/Api'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
