@@ -14,6 +14,7 @@ export default class MyDocument extends Document {
           <title>Editor de Texto Online - By Be Dev Club</title>
           <link rel="preconnect" href="https://fonts.gstatic.com" />
           <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Condensed&display=swap" rel="stylesheet" />
+          <link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet" />
         </Head>
         <body>
           <Main />
