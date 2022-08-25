@@ -51,7 +51,7 @@ export const Content: React.FC<any> = () => {
           Deletar
         </ButtonDelete>
 
-        <ButtonSave onClick={() => updateById(quill.getText())}>
+        <ButtonSave onClick={() => updateById(quill ? quill.getText() : fileSelected.content)}>
           Salvar
         </ButtonSave>
       </BoxContentButton>
