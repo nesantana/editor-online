@@ -1,5 +1,4 @@
-import { api, urls } from '@src/Services/Api'
-import { useRouter } from 'next/router'
+import { iFileOrDirectory, useFileContext } from '@src/Contexts/Files.Context'
 import React, { useEffect, useState } from 'react'
 import { BsFillFileEarmarkMinusFill } from 'react-icons/bs'
 import { FiChevronDown, FiChevronRight } from 'react-icons/fi'
@@ -7,44 +6,27 @@ import {
   ContentSidebar, Directory, File, Son,
 } from './styled'
 
-interface iFileOrDirectory {
-  id: number
-  isDirectory: boolean
-  name: string
-  children: iFileOrDirectory[]
-}
-
 interface iCurrentComponent {
   id: number
   isDirectory: boolean
   text: string
+  item: iFileOrDirectory
 }
 
 export const Sidebar: React.FC<any> = () => {
-  const [tree, setTree] = useState<iFileOrDirectory[]>([])
+  const { searchFileById, files, searchFiles } = useFileContext()
+
   const [open, setOpen] = useState<number[]>([])
 
-  const { push: pushRouter } = useRouter()
-
-  const searchAll = async () => {
-    try {
-      const { data } : { data: iFileOrDirectory[] } = await api.get(urls.getAll)
-
-      console.log(data)
-      setTree(data as iFileOrDirectory[])
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
   useEffect(() => {
-    searchAll()
+    searchFiles()
   }, [])
 
   const CurrentComponent = ({
     id,
     isDirectory,
     text,
+    item,
   } : iCurrentComponent) => {
     if (isDirectory) {
       return (
@@ -60,7 +42,7 @@ export const Sidebar: React.FC<any> = () => {
     }
 
     return (
-      <File onClick={() => handleSetOpenFile(id)}>
+      <File onClick={() => handleSetOpenFile(item)}>
         <BsFillFileEarmarkMinusFill />
         {' '}
         {text}
@@ -78,38 +60,35 @@ export const Sidebar: React.FC<any> = () => {
     setOpen((prevState) => [...prevState, id])
   }
 
-  const handleSetOpenFile = (id: number) => {
-    pushRouter(`/${id}`)
+  const handleSetOpenFile = (item: iFileOrDirectory) => {
+    searchFileById(item)
   }
 
-  const RenderFiles = ({ item } : { item: iFileOrDirectory }) => {
-    console.log(item)
+  const RenderFiles = ({ item } : { item: iFileOrDirectory }) => (
+    <Son key={`${item.id}-${item.name}-inside`}>
+      <CurrentComponent
+        item={item}
+        id={item.id}
+        isDirectory={item.isDirectory}
+        text={`${item.name}`}
+      />
 
-    return (
-      <Son key={`${item.id}-${item.name}-inside`}>
-        <CurrentComponent
-          id={item.id}
-          isDirectory={item.isDirectory}
-          text={`${item.name}`}
-        />
-
-        {
+      {
           (
             open.includes(item.id)
-            && item.children
-            && item.children.length
+            && !!item.children
+            && !!item.children.length
           )
           && item.children.map((son) => (
             <RenderFiles key={`${son.id}-renderFiles`} item={son} />
           ))
         }
-      </Son>
-    )
-  }
+    </Son>
+  )
 
   return (
     <ContentSidebar>
-      { tree.map((item) => (
+      { files.map((item) => (
         <RenderFiles key={`${item.id}-renderFiles`} item={item} />
       )) }
       <div />

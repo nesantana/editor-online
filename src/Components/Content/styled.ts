@@ -8,6 +8,7 @@ export const BoxContent = styled.div`
   right: 0;
   top: 0;
   padding: 30px;
+  overflow: auto;
 `
 
 export const BoxContentTextEditor = styled.div`
@@ -39,4 +40,12 @@ export const ButtonDelete = styled.div`
 export const BoxContentButton = styled.div`
   display: flex;
   justify-content: space-between;
+`
+
+export const InputNameFile = styled.input`
+  width: 100%;
+  padding: 0 15px;
+  border: 1px solid #bbbbbb;
+  height: 65px;
+  font-size: 35px;
 `

@@ -1,24 +1,16 @@
+import { iFile, useFileContext } from '@src/Contexts/Files.Context'
 import { api, urls } from '@src/Services/Api'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { useQuill } from 'react-quilljs'
 import {
-  BoxContent, BoxContentButton, BoxContentTextEditor, ButtonDelete, ButtonSave,
+  BoxContent, BoxContentButton, BoxContentTextEditor, ButtonDelete, ButtonSave, InputNameFile,
 } from './styled'
 
-interface iContent {
-  id: number
-}
-
-interface iFile {
-  content: string
-  id: number
-  name: string
-}
-
-export const Content: React.FC<iContent> = ({ id }) => {
-  const [file, setFile] = useState<iFile>({} as iFile)
-  const { push: pushRouter } = useRouter()
+export const Content: React.FC<any> = () => {
+  const {
+    fileSelected, setFileSelected, deleteById, updateById,
+  } = useFileContext()
 
   const modules = {
     toolbar: [
@@ -30,49 +22,25 @@ export const Content: React.FC<iContent> = ({ id }) => {
     quill, quillRef,
   } = useQuill({ modules })
 
-  const searchFileById = async () => {
-    try {
-      const { data } : { data: iFile } = await api.get(`${urls.general}${id}`)
-
-      setFile(data)
-      quill.setText(data.content)
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
-  const updateById = async () => {
-    try {
-      const newFile = {
-        ...file,
-        content: quillRef.current.innerText,
-      }
-
-      await api.put(`${urls.general}${id}`, newFile)
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
-  const deleteById = async () => {
-    try {
-      await api.put(`${urls.general}${id}`)
-
-      pushRouter('/')
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
   useEffect(() => {
-    if (quill) {
-      searchFileById()
+    if (quill && fileSelected.content) {
+      quill.setText(fileSelected.content)
     }
-  }, [id, quill])
+  }, [fileSelected, quill])
 
   return (
     <BoxContent>
-      <h1>{file.name}</h1>
+      <InputNameFile
+        value={fileSelected.name}
+        onChange={({ target }) => {
+          setFileSelected((prevState: iFile) => (
+            {
+              ...prevState,
+              name: target.value,
+            } as iFile
+          ))
+        }}
+      />
 
       <BoxContentTextEditor>
         <div ref={quillRef} />
@@ -83,7 +51,7 @@ export const Content: React.FC<iContent> = ({ id }) => {
           Deletar
         </ButtonDelete>
 
-        <ButtonSave onClick={updateById}>
+        <ButtonSave onClick={() => updateById(quill.getText())}>
           Salvar
         </ButtonSave>
       </BoxContentButton>

@@ -1,6 +1,7 @@
 import type { AppProps } from 'next/app'
 import { createGlobalStyle } from 'styled-components'
 import 'quill/dist/quill.snow.css'
+import { FileProvider } from '@src/Contexts/Files.Context'
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -25,10 +26,10 @@ const GlobalStyle = createGlobalStyle`
 `
 
 const App = ({ Component, pageProps }: AppProps) => (
-  <>
+  <FileProvider>
     <GlobalStyle />
     <Component {...pageProps} />
-  </>
+  </FileProvider>
 )
 
 export default App
