@@ -17,9 +17,9 @@ export const useThemeContext = () => useContext(ThemeContext)
 export const ThemeProvider: React.FC<any> = ({ children }) => {
   const [theme, setTheme] = useState<themes>('sun')
 
-  const updateTheme = (theme: themes) => {
-    setTheme(theme)
-    localStorage.setItem('theme', theme)
+  const updateTheme = (newTheme: themes) => {
+    setTheme(newTheme)
+    localStorage.setItem('theme', newTheme)
   }
 
   useEffect(() => {
