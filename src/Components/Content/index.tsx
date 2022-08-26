@@ -1,16 +1,40 @@
 import { iFile, useFileContext } from '@src/Contexts/Files.context'
-import { api, urls } from '@src/Services/Api'
-import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useQuill } from 'react-quilljs'
+import { BsFillSunFill, BsFillMoonFill } from 'react-icons/bs'
+import { themes, useThemeContext } from '@src/Contexts/Theme.context'
 import {
-  BoxContent, BoxContentButton, BoxContentTextEditor, ButtonDelete, ButtonSave, InputNameFile,
+  BoxContent,
+  BoxContentButton,
+  BoxContentTextEditor,
+  BoxTheme,
+  ButtonDelete,
+  ButtonSave,
+  InputNameFile,
 } from './styled'
+
+const buttonsTheme = [
+  {
+    id: 'moon',
+    component: BsFillMoonFill,
+  },
+  {
+    id: 'sun',
+    component: BsFillSunFill,
+  },
+]
 
 export const Content: React.FC<any> = () => {
   const {
-    fileSelected, setFileSelected, deleteById, updateById,
+    fileSelected,
+    setFileSelected,
+    deleteById,
+    updateById,
   } = useFileContext()
+
+  const { theme, updateTheme } = useThemeContext()
+
+  const hasId = useMemo(() => !!fileSelected.id, [fileSelected])
 
   const modules = {
     toolbar: [
@@ -29,32 +53,54 @@ export const Content: React.FC<any> = () => {
   }, [fileSelected, quill])
 
   return (
-    <BoxContent>
-      <InputNameFile
-        value={fileSelected.name}
-        onChange={({ target }) => {
-          setFileSelected((prevState: iFile) => (
-            {
-              ...prevState,
-              name: target.value,
-            } as iFile
+    <BoxContent theme={theme}>
+      <BoxTheme>
+        {
+          buttonsTheme.map(({ id, component: Component }) => (
+            <Component
+              key={id}
+              className={theme === id ? 'active' : ''}
+              onClick={() => updateTheme(id as themes)}
+            />
           ))
-        }}
-      />
+        }
+      </BoxTheme>
 
-      <BoxContentTextEditor>
-        <div ref={quillRef} />
-      </BoxContentTextEditor>
+      {
+        hasId && (
+          <>
+            <InputNameFile
+              value={fileSelected.name}
+              onChange={({ target }) => {
+                setFileSelected((prevState: iFile) => (
+                  {
+                    ...prevState,
+                    name: target.value,
+                  } as iFile
+                ))
+              }}
+            />
 
-      <BoxContentButton>
-        <ButtonDelete onClick={deleteById}>
-          Deletar
-        </ButtonDelete>
+            <BoxContentTextEditor>
+              <div ref={quillRef} />
+            </BoxContentTextEditor>
 
-        <ButtonSave onClick={() => updateById(quill ? quill.getText() : fileSelected.content)}>
-          Salvar
-        </ButtonSave>
-      </BoxContentButton>
+            <BoxContentButton>
+              <ButtonDelete onClick={deleteById}>
+                Deletar
+              </ButtonDelete>
+
+              <ButtonSave onClick={() => updateById((
+                quill
+                  ? quill.getText()
+                  : fileSelected.content))}
+              >
+                Salvar
+              </ButtonSave>
+            </BoxContentButton>
+          </>
+        )
+      }
     </BoxContent>
   )
 }
